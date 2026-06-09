@@ -130,7 +130,7 @@
 
     <!-- Top Navigation Telegram Header -->
     <header class="tg-panel z-30 shrink-0">
-        <div class="max-w-7xl mx-auto px-4 md:px-8 py-3.5 flex justify-between items-center">
+        <div class="max-w-3xl mx-auto px-4 py-3.5 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <!-- Dynamic Initial Avatar -->
                 <div id="header-avatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-sm bg-gradient-to-tr from-sky-500 to-blue-600">
@@ -150,7 +150,7 @@
             <!-- Action items -->
             <div class="flex items-center gap-3">
                 <span class="hidden sm:inline text-xs text-slate-500 bg-white/5 py-1 px-2.5 rounded-full">
-                    Нажми <kbd class="font-bold text-sky-400">+</kbd> или <kbd class="font-bold text-sky-400">N</kbd> для новой операции
+                    Нажми <kbd class="font-bold text-sky-400">+</kbd> или <kbd class="font-bold text-sky-400">N</kbd>
                 </span>
                 <!-- Backup & Restore -->
                 <button onclick="AppActions.exportBackup()" class="p-2 rounded-xl hover:bg-white/5 text-slate-300 transition-colors" title="Скачать резервную копию">
@@ -177,13 +177,13 @@
     <div class="slider-viewport flex-1 relative z-10">
         <div id="app-slider" class="slider-wrapper">
             <!-- Slide 1: Home/Dashboard -->
-            <div id="slide-home" class="slide px-4 md:px-8 pt-6"></div>
+            <div id="slide-home" class="slide px-4 pt-6"></div>
             <!-- Slide 2: Accounts -->
-            <div id="slide-accounts" class="slide px-4 md:px-8 pt-6"></div>
+            <div id="slide-accounts" class="slide px-4 pt-6"></div>
             <!-- Slide 3: Recurring Payments (Subscriptions) -->
-            <div id="slide-subs" class="slide px-4 md:px-8 pt-6"></div>
+            <div id="slide-subs" class="slide px-4 pt-6"></div>
             <!-- Slide 4: Ledger History -->
-            <div id="slide-history" class="slide px-4 md:px-8 pt-6"></div>
+            <div id="slide-history" class="slide px-4 pt-6"></div>
         </div>
     </div>
 
@@ -196,7 +196,7 @@
 
     <!-- Bottom Navigation Bar (Telegram Native look) -->
     <nav class="absolute bottom-0 left-0 right-0 tg-panel p-2.5 shadow-2xl z-40 shrink-0">
-        <div class="max-w-4xl mx-auto flex justify-around items-center">
+        <div class="max-w-3xl mx-auto flex justify-around items-center">
             <button id="nav-home" onclick="Router.go(0)" class="py-1 px-6 flex flex-col items-center gap-1 text-xs text-[#2481cc] transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -352,7 +352,7 @@
     </div>
 </div>
 
-<!-- Subscription Add/Edit Modal (With full direct edits) -->
+<!-- Subscription Add/Edit Modal -->
 <div id="sub-modal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
     <div class="bg-[#17212b] border-t border-white/5 w-full max-w-md p-6 rounded-t-3xl sm:rounded-2xl shadow-2xl relative transition-all duration-300 transform translate-y-20" id="sub-modal-content">
         <button onclick="SubModal.close()" class="absolute top-5 right-5 text-[#7f91a4] hover:text-white text-lg">✕</button>
@@ -402,7 +402,6 @@ const cur = (n) => (n||0).toLocaleString('ru-RU', {style:'currency', currency:'R
 const today = () => new Date().toISOString().slice(0,10);
 const $ = (id) => document.getElementById(id);
 
-// Config colors matching Telegram client badges & channels
 const COLOR_PALETTE = {
     cyan: '#2481cc',
     blue: '#3b82f6',
@@ -415,7 +414,6 @@ const COLOR_PALETTE = {
 
 const STORAGE_KEY = 'finflow_tg_data';
 
-// Default mock values if storage is empty
 const defaultState = {
     accounts: [
         {id:'main', name:'💳 Карта (Основной)', color:'cyan', alloc:50, bal:0, target:0},
@@ -445,10 +443,7 @@ const save = () => {
 };
 
 function recalc() {
-    // Zero out account balances
     state.accounts.forEach(a => a.bal = 0);
-    
-    // Process ledger history
     const sorted = [...state.tx].sort((a,b) => new Date(a.date) - new Date(b.date));
     
     sorted.forEach(t => {
@@ -456,7 +451,7 @@ function recalc() {
             const acc = state.accounts.find(a => a.id === t.accId);
             if (acc) acc.bal -= t.amount;
         } else if (t.type === 'income') {
-            if (t.isDist) return; // Skip parent records
+            if (t.isDist) return;
             const acc = state.accounts.find(a => a.id === t.accId);
             if (acc) acc.bal += t.amount;
         } else if (t.type === 'transfer') {
@@ -468,7 +463,6 @@ function recalc() {
     });
 }
 
-// Automatically divide deposit by active allocations
 function distributeIncome(amount, date, source) {
     const parentId = uid();
     state.tx.push({ id:parentId, type:'income', amount, date, cat:source, isDist:true });
@@ -495,18 +489,15 @@ function distributeIncome(amount, date, source) {
     }
 }
 
-// --- STREAMING_CHUNK:Implementing navigation controller... ---
 const Router = {
-    currentTab: 0, // 0: Home, 1: Accounts, 2: Subs, 3: History
+    currentTab: 0,
 
     go(tabIndex) {
         this.currentTab = Math.max(0, Math.min(3, tabIndex));
         
-        // Horizontal sliding calculation
         const wrapper = $('app-slider');
         wrapper.style.transform = `translateX(-${this.currentTab * 25}%)`;
         
-        // Highlight active bottom tab button
         const tabs = ['home', 'accounts', 'subs', 'history'];
         tabs.forEach((tab, index) => {
             const btn = $(`nav-${tab}`);
@@ -531,7 +522,6 @@ const Router = {
     },
 
     refresh() {
-        // Redraw slides dynamically
         $('slide-home').innerHTML = Views.home();
         $('slide-accounts').innerHTML = Views.accounts();
         $('slide-subs').innerHTML = Views.subs();
@@ -576,7 +566,7 @@ const Router = {
         window.myFinChart = new Chart(canvas, {
             type: 'line',
             data: {
-                labels: labels.map(l => l.slice(8)), // Only day index
+                labels: labels.map(l => l.slice(8)),
                 datasets: [{
                     label: 'Расходы',
                     data: Object.values(datasets),
@@ -609,7 +599,6 @@ const Router = {
     }
 };
 
-// Gesture Touch Handlers for horizontal swiping
 let touchStartX = 0;
 let touchStartY = 0;
 let touchEndX = 0;
@@ -630,18 +619,16 @@ const setupSwipeGestures = () => {
         const deltaX = touchEndX - touchStartX;
         const deltaY = touchEndY - touchStartY;
         
-        // Rule: Swipe must be significantly horizontal rather than vertical
         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 80) {
             if (deltaX > 0) {
-                Router.prev(); // Swipe Right -> Go back
+                Router.prev();
             } else {
-                Router.next(); // Swipe Left -> Go forward
+                Router.next();
             }
         }
     }, { passive: true });
 };
 
-// --- STREAMING_CHUNK:Creating core UI rendering modules... ---
 const TgDialog = {
     onConfirm: null,
     onCancel: null,
@@ -757,7 +744,6 @@ const Components = {
     }
 };
 
-// --- STREAMING_CHUNK:Formulating account and subscription dialogue forms... ---
 const Views = {
     home: () => {
         const recent = [...state.tx]
@@ -768,22 +754,16 @@ const Views = {
             .join('');
 
         return `
-        <div class="max-w-7xl mx-auto space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                <!-- Left Column (Span 2): Analytics & Balance -->
-                <div class="lg:col-span-2 space-y-6">
-                    ${Components.TelegramTotalCard()}
-                    ${Components.MiniRadarChart()}
+        <div class="max-w-3xl mx-auto space-y-6">
+            ${Components.TelegramTotalCard()}
+            ${Components.MiniRadarChart()}
+            <div class="space-y-3">
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-[10px] font-bold tracking-widest text-[#7f91a4] uppercase">ПОСЛЕДНИЕ СООБЩЕНИЯ (ОПЕРАЦИИ)</span>
+                    <button onclick="Router.go(3)" class="text-[10px] font-bold text-[#2481cc] uppercase hover:underline">ВСЕ</button>
                 </div>
-                <!-- Right Column (Span 1): Live Activity log -->
-                <div class="space-y-3 lg:col-span-1">
-                    <div class="flex justify-between items-center px-1">
-                        <span class="text-[10px] font-bold tracking-widest text-[#7f91a4] uppercase">ПОСЛЕДНИЕ СООБЩЕНИЯ (ОПЕРАЦИИ)</span>
-                        <button onclick="Router.go(3)" class="text-[10px] font-bold text-[#2481cc] uppercase hover:underline">ВСЕ</button>
-                    </div>
-                    <div class="space-y-1 bg-[#17212b]/30 p-4 rounded-2xl border border-white/5 max-h-[420px] overflow-y-auto pr-2">
-                        ${recent || '<div class="p-8 text-center text-slate-500 text-xs uppercase font-medium">Нет недавних транзакций</div>'}
-                    </div>
+                <div class="space-y-1 bg-[#17212b]/30 p-4 rounded-2xl border border-white/5">
+                    ${recent || '<div class="p-8 text-center text-slate-500 text-xs uppercase font-medium">Нет недавних транзакций</div>'}
                 </div>
             </div>
         </div>`;
@@ -796,13 +776,13 @@ const Views = {
         let allocWarning = '';
         if (totalAlloc !== 100) {
             allocWarning = `
-            <div class="p-3 bg-rose-950/30 border border-rose-500/10 text-rose-300 rounded-xl text-center text-xs font-semibold uppercase tracking-wide">
+            <div class="p-3 bg-rose-950/30 border border-rose-500/10 text-rose-300 rounded-xl text-center text-xs font-semibold uppercase tracking-wide mb-4">
                 ⚠️ Доли распределения (${totalAlloc}%) не равны 100%! <br>Пожалуйста, настройте кошельки.
             </div>`;
         }
 
         return `
-        <div class="max-w-7xl mx-auto space-y-6">
+        <div class="max-w-3xl mx-auto space-y-6">
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-md font-bold text-white uppercase tracking-wider">КОШЕЛЬКИ</h2>
@@ -813,7 +793,7 @@ const Views = {
                 </button>
             </div>
             ${allocWarning}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${list}</div>
+            <div class="space-y-3">${list}</div>
         </div>`;
     },
 
@@ -843,7 +823,7 @@ const Views = {
         }).join('');
 
         return `
-        <div class="max-w-7xl mx-auto space-y-6">
+        <div class="max-w-3xl mx-auto space-y-6">
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-md font-bold text-white uppercase tracking-wider">АВТОСПИСАНИЯ</h2>
@@ -853,26 +833,26 @@ const Views = {
                     Добавить
                 </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                ${list || '<div class="tg-card p-8 rounded-2xl text-center text-slate-500 text-xs uppercase col-span-full">Нет активных автосписаний</div>'}
+            <div class="space-y-3">
+                ${list || '<div class="tg-card p-8 rounded-2xl text-center text-slate-500 text-xs uppercase">Нет активных автосписаний</div>'}
             </div>
         </div>`;
     },
 
     history: () => {
         const all = [...state.tx]
-            .filter(t => !t.parentId) // Top level root transactions
+            .filter(t => !t.parentId)
             .sort((a,b)=> new Date(b.date)-new Date(a.date))
             .map(Components.TxChatBubble).join('');
 
         return `
-        <div class="max-w-7xl mx-auto space-y-6">
+        <div class="max-w-3xl mx-auto space-y-6">
             <div>
                 <h2 class="text-md font-bold text-white uppercase tracking-wider">БОРТОВОЙ ЛОГ</h2>
                 <p class="text-xs text-[#7f91a4] mt-0.5">История всех транзакций</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                ${all || '<div class="tg-card p-8 rounded-2xl text-center text-slate-500 text-xs uppercase col-span-full">История пуста</div>'}
+            <div class="space-y-3">
+                ${all || '<div class="tg-card p-8 rounded-2xl text-center text-slate-500 text-xs uppercase">История пуста</div>'}
             </div>
         </div>`;
     }
@@ -888,7 +868,6 @@ const TxModal = {
         $('m-sum').value = '';
         $('m-sum').focus();
         
-        // Reset distribute toggle to default on modal open
         if ($('m-distribute')) {
             $('m-distribute').checked = true;
         }
@@ -1199,7 +1178,6 @@ const AppActions = {
                     cat: `🔄 ${sub.name}`
                 });
                 
-                // Advance date
                 const d = new Date(sub.next);
                 if (sub.freq === 'месяц') {
                     d.setMonth(d.getMonth() + 1);
@@ -1246,7 +1224,6 @@ const AppActions = {
     }
 };
 
-// Keydown listeners for desktop shortcuts (+ or N key to open modal)
 document.addEventListener('keydown', (e) => {
     if (e.key === '+' || e.key === '=' || (e.key.toLowerCase() === 'n' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT' && document.activeElement.tagName !== 'TEXTAREA')) {
         e.preventDefault();
