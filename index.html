@@ -40,7 +40,11 @@
         .tg-card {
             background-color: var(--tg-sec-bg);
             border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .tg-card:hover {
+            border-color: rgba(255, 255, 255, 0.08);
         }
 
         .tg-card:active {
@@ -72,11 +76,13 @@
         /* Message Bubble Looks */
         .msg-bubble-in {
             background-color: #182533;
-            border-radius: 12px 12px 12px 2px;
+            border-radius: 14px 14px 14px 4px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
         .msg-bubble-out {
             background-color: #2b5278;
-            border-radius: 12px 12px 2px 12px;
+            border-radius: 14px 14px 4px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
 
         /* Seamless Horizontal Slider Viewport */
@@ -91,7 +97,7 @@
             display: flex;
             width: 400%; /* 4 tabs total */
             height: 100%;
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .slide {
@@ -99,12 +105,12 @@
             height: 100%;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 96px; /* Space for the floating button and bottom nav */
+            padding-bottom: 110px; /* Space for footer nav */
         }
 
         /* Custom scrollbar matching Telegram Desktop client */
         ::-webkit-scrollbar {
-            width: 4px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
             background: transparent;
@@ -116,113 +122,113 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(127, 145, 164, 0.4);
         }
-
-        /* Wave pattern or custom badge avatar fallback */
-        .avatar-gradient-1 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
-        .avatar-gradient-2 { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
-        .avatar-gradient-3 { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
-        .avatar-gradient-4 { background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); }
-        .avatar-gradient-5 { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
     </style>
 </head>
 <body class="antialiased selection:bg-sky-500 selection:text-white flex justify-center">
 
-<div class="w-full max-w-md h-screen relative flex flex-col bg-[#0e1621] shadow-2xl overflow-hidden border-x border-white/5">
+<div class="w-full h-screen relative flex flex-col bg-[#0e1621] overflow-hidden">
 
     <!-- Top Navigation Telegram Header -->
-    <header class="tg-panel px-4 py-3 flex justify-between items-center z-30 shrink-0">
-        <div class="flex items-center gap-3">
-            <!-- Dynamic Initial Avatar -->
-            <div id="header-avatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-sm bg-gradient-to-tr from-sky-500 to-blue-600">
-                FF
-            </div>
-            <div>
-                <h1 class="text-md font-bold tracking-tight text-white flex items-center gap-1.5">
-                    Fin-Flow Wallet
-                </h1>
-                <div class="flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-xs text-[#7f91a4] font-medium">в сети</span>
+    <header class="tg-panel z-30 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 py-3.5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <!-- Dynamic Initial Avatar -->
+                <div id="header-avatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-sm bg-gradient-to-tr from-sky-500 to-blue-600">
+                    FF
+                </div>
+                <div>
+                    <h1 class="text-md font-bold tracking-tight text-white flex items-center gap-1.5">
+                        Fin-Flow Wallet
+                    </h1>
+                    <div class="flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs text-[#7f91a4] font-medium">в сети</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Action items -->
-        <div class="flex items-center gap-3">
-            <!-- Backup & Restore -->
-            <button onclick="AppActions.exportBackup()" class="p-2 rounded-full hover:bg-white/5 text-slate-300 transition-colors" title="Резервная копия">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-            </button>
-            <label class="p-2 rounded-full hover:bg-white/5 text-slate-300 transition-colors cursor-pointer" title="Загрузить бэкап">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                </svg>
-                <input type="file" id="import-file" class="hidden" accept=".json" onchange="AppActions.importBackup(event)">
-            </label>
+            
+            <!-- Action items -->
+            <div class="flex items-center gap-3">
+                <span class="hidden sm:inline text-xs text-slate-500 bg-white/5 py-1 px-2.5 rounded-full">
+                    Нажми <kbd class="font-bold text-sky-400">+</kbd> или <kbd class="font-bold text-sky-400">N</kbd> для новой операции
+                </span>
+                <!-- Backup & Restore -->
+                <button onclick="AppActions.exportBackup()" class="p-2 rounded-xl hover:bg-white/5 text-slate-300 transition-colors" title="Скачать резервную копию">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                </button>
+                <label class="p-2 rounded-xl hover:bg-white/5 text-slate-300 transition-colors cursor-pointer" title="Загрузить резервную копию">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    <input type="file" id="import-file" class="hidden" accept=".json" onchange="AppActions.importBackup(event)">
+                </label>
+            </div>
         </div>
     </header>
 
     <!-- Swipe Instructions (Hiding on desktop, helpful on mobile) -->
-    <div class="bg-[#17212b]/40 py-1 text-center text-[10px] text-[#7f91a4] border-b border-white/5 select-none shrink-0">
-        👉 Листай влево или вправо для переключения вкладок
+    <div class="bg-[#17212b]/40 py-1.5 text-center text-[10px] text-[#7f91a4] border-b border-white/5 select-none shrink-0 tracking-wider uppercase">
+        👉 Листай влево или вправо для быстрого переключения вкладок
     </div>
 
     <!-- Active dynamic slider viewport -->
     <div class="slider-viewport flex-1 relative z-10">
         <div id="app-slider" class="slider-wrapper">
             <!-- Slide 1: Home/Dashboard -->
-            <div id="slide-home" class="slide px-4 pt-4 space-y-4"></div>
+            <div id="slide-home" class="slide px-4 md:px-8 pt-6"></div>
             <!-- Slide 2: Accounts -->
-            <div id="slide-accounts" class="slide px-4 pt-4 space-y-4"></div>
+            <div id="slide-accounts" class="slide px-4 md:px-8 pt-6"></div>
             <!-- Slide 3: Recurring Payments (Subscriptions) -->
-            <div id="slide-subs" class="slide px-4 pt-4 space-y-4"></div>
+            <div id="slide-subs" class="slide px-4 md:px-8 pt-6"></div>
             <!-- Slide 4: Ledger History -->
-            <div id="slide-history" class="slide px-4 pt-4 space-y-4"></div>
+            <div id="slide-history" class="slide px-4 md:px-8 pt-6"></div>
         </div>
     </div>
 
     <!-- Floating Blue Compose FAB (Telegram style bottom right compose button) -->
-    <button onclick="TxModal.open()" class="absolute bottom-24 right-5 bg-[#2481cc] hover:bg-[#2a8fdf] text-white w-14 h-14 rounded-full shadow-lg shadow-sky-900/30 flex items-center justify-center text-3xl transition-all transform active:scale-90 z-40" id="compose-fab">
+    <button onclick="TxModal.open()" class="fixed bottom-24 right-6 md:right-10 bg-[#2481cc] hover:bg-[#2a8fdf] text-white w-14 h-14 rounded-full shadow-lg shadow-sky-900/30 flex items-center justify-center text-3xl transition-all transform hover:scale-105 active:scale-95 z-40" id="compose-fab">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
         </svg>
     </button>
 
     <!-- Bottom Navigation Bar (Telegram Native look) -->
-    <nav class="absolute bottom-0 left-0 right-0 tg-panel p-2.5 flex justify-around items-center shadow-2xl z-40 shrink-0">
-        <button id="nav-home" onclick="Router.go(0)" class="py-1 px-4 flex flex-col items-center gap-1 text-xs text-[#2481cc] transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            <span class="text-[10px] font-medium uppercase tracking-wider">Чат-HUD</span>
-        </button>
-        <button id="nav-accounts" onclick="Router.go(1)" class="py-1 px-4 flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-white transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-            <span class="text-[10px] font-medium uppercase tracking-wider">Кошельки</span>
-        </button>
-        <button id="nav-subs" onclick="Router.go(2)" class="py-1 px-4 flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-white transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2" />
-            </svg>
-            <span class="text-[10px] font-medium uppercase tracking-wider">Авто</span>
-        </button>
-        <button id="nav-history" onclick="Router.go(3)" class="py-1 px-4 flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-white transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-            <span class="text-[10px] font-medium uppercase tracking-wider">Лог</span>
-        </button>
+    <nav class="absolute bottom-0 left-0 right-0 tg-panel p-2.5 shadow-2xl z-40 shrink-0">
+        <div class="max-w-4xl mx-auto flex justify-around items-center">
+            <button id="nav-home" onclick="Router.go(0)" class="py-1 px-6 flex flex-col items-center gap-1 text-xs text-[#2481cc] transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="text-[10px] font-semibold uppercase tracking-wider">Чат-HUD</span>
+            </button>
+            <button id="nav-accounts" onclick="Router.go(1)" class="py-1 px-6 flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-white transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                <span class="text-[10px] font-semibold uppercase tracking-wider">Кошельки</span>
+            </button>
+            <button id="nav-subs" onclick="Router.go(2)" class="py-1 px-6 flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-white transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2" />
+                </svg>
+                <span class="text-[10px] font-semibold uppercase tracking-wider">Авто</span>
+            </button>
+            <button id="nav-history" onclick="Router.go(3)" class="py-1 px-6 flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-white transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span class="text-[10px] font-semibold uppercase tracking-wider">Лог</span>
+            </button>
+        </div>
     </nav>
 
 </div>
 
-<!-- Telegram Custom Confirm/Alert Dialog Modal (Replaces unsafe window.alert & window.confirm) -->
+<!-- Telegram Custom Confirm/Alert Dialog Modal -->
 <div id="tg-dialog-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
-    <div class="bg-[#17212b] border border-white/5 w-[85%] max-w-sm p-5 rounded-2xl shadow-2xl relative transition-all transform scale-95" id="tg-dialog-content">
+    <div class="bg-[#17212b] border border-white/5 w-[85%] max-w-sm p-6 rounded-2xl shadow-2xl relative transition-all transform scale-95" id="tg-dialog-content">
         <h3 id="tg-dialog-title" class="text-md font-bold text-white mb-2">Подтверждение</h3>
         <p id="tg-dialog-text" class="text-sm text-[#7f91a4] leading-relaxed mb-6">Вы действительно хотите выполнить это действие?</p>
         <div class="flex gap-3 justify-end">
@@ -257,13 +263,25 @@
             <!-- Amount Input -->
             <div class="relative bg-black/20 p-3 rounded-xl border border-white/5 text-center">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#7f91a4] font-semibold text-xs">СУММА</span>
-                <input type="number" id="m-sum" class="text-4xl bg-transparent text-center w-full outline-none font-bold text-white placeholder-slate-700" placeholder="0" autofocus>
+                <input type="number" id="m-sum" class="text-4xl bg-transparent text-center w-full outline-none font-bold text-white placeholder-slate-700" placeholder="0">
                 <span class="text-[9px] text-[#7f91a4] tracking-wider uppercase block mt-1">введите сумму в ₽</span>
+            </div>
+
+            <!-- Toggle for Income Distribution -->
+            <div id="field-distribute" class="flex items-center justify-between p-3.5 bg-black/25 rounded-xl border border-white/5 hidden">
+                <div class="flex flex-col">
+                    <span class="text-xs text-slate-300 font-semibold">Распределить по долям</span>
+                    <span class="text-[9px] text-[#7f91a4]">Автоматически разбить доход по кошелькам</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="m-distribute" class="sr-only peer" checked onchange="TxModal.toggleDistribute(this.checked)">
+                    <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2481cc]"></div>
+                </label>
             </div>
             
             <!-- Source Wallet Field -->
             <div id="field-acc" class="space-y-1">
-                <label class="text-[10px] tracking-wider font-bold text-[#7f91a4] uppercase ml-1">Счёт списания</label>
+                <label id="field-acc-label" class="text-[10px] tracking-wider font-bold text-[#7f91a4] uppercase ml-1">Счёт списания</label>
                 <select id="m-acc" class="tg-input w-full p-3 rounded-xl text-sm"></select>
             </div>
 
@@ -320,9 +338,7 @@
             </div>
             <div>
                 <label class="text-[10px] tracking-wider font-bold text-[#7f91a4] uppercase ml-1">Цветовая метка</label>
-                <div class="grid grid-cols-6 gap-2 pt-1" id="acc-m-colors">
-                    <!-- Dynamic color tags filled inside JS -->
-                </div>
+                <div class="grid grid-cols-6 gap-2 pt-1" id="acc-m-colors"></div>
             </div>
             <div class="flex gap-2 pt-2">
                 <button id="acc-m-delete-btn" onclick="AccModal.delete()" class="flex-1 bg-rose-950/50 hover:bg-rose-900 border border-rose-500/20 text-rose-400 font-bold py-3 rounded-xl transition-all uppercase text-xs tracking-wider">
@@ -336,7 +352,7 @@
     </div>
 </div>
 
-<!-- NEW: Subscription Add/Edit Modal (Directly editable recurring payments!) -->
+<!-- Subscription Add/Edit Modal (With full direct edits) -->
 <div id="sub-modal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/85 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
     <div class="bg-[#17212b] border-t border-white/5 w-full max-w-md p-6 rounded-t-3xl sm:rounded-2xl shadow-2xl relative transition-all duration-300 transform translate-y-20" id="sub-modal-content">
         <button onclick="SubModal.close()" class="absolute top-5 right-5 text-[#7f91a4] hover:text-white text-lg">✕</button>
@@ -381,9 +397,6 @@
 </div>
 
 <script>
-/**
- * */
-
 const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 const cur = (n) => (n||0).toLocaleString('ru-RU', {style:'currency', currency:'RUB', maximumFractionDigits:0});
 const today = () => new Date().toISOString().slice(0,10);
@@ -410,16 +423,16 @@ const defaultState = {
         {id:'fun', name:'🍕 Карманные расходы', color:'amber', alloc:20, bal:0, target:20000}
     ],
     tx: [
-        {id:'tx1', type:'income', amount:100000, date:today(), cat:'Зарплата', isDist:true},
-        {id:'tx2', type:'transfer', from:null, to:'main', amount:50000, date:today(), note:'⚡ Зарплата', parentId:'tx1'},
-        {id:'tx3', type:'transfer', from:null, to:'invest', amount:30000, date:today(), note:'⚡ Зарплата', parentId:'tx1'},
-        {id:'tx4', type:'transfer', from:null, to:'fun', amount:20000, date:today(), note:'⚡ Зарплата', parentId:'tx1'},
+        {id:'tx1', type:'income', amount:120000, date:today(), cat:'Зарплата', isDist:true},
+        {id:'tx2', type:'transfer', from:null, to:'main', amount:60000, date:today(), note:'⚡ Зарплата', parentId:'tx1'},
+        {id:'tx3', type:'transfer', from:null, to:'invest', amount:36000, date:today(), note:'⚡ Зарплата', parentId:'tx1'},
+        {id:'tx4', type:'transfer', from:null, to:'fun', amount:24000, date:today(), note:'⚡ Зарплата', parentId:'tx1'},
         {id:'tx5', type:'expense', amount:1200, date:today(), accId:'main', cat:'Продукты в супермаркете'},
         {id:'tx6', type:'expense', amount:350, date:today(), accId:'fun', cat:'Кофе с собой'}
     ],
     subs: [
         { id:'sub1', name:'Яндекс Плюс', amount:299, freq:'месяц', next:today(), accId:'main' },
-        { id:'sub2', name:'Абонемент в зал', amount:3000, freq:'месяц', next:today(), accId:'main' }
+        { id:'sub2', name:'Абонемент в спортзал', amount:3000, freq:'месяц', next:today(), accId:'main' }
     ]
 };
 
@@ -431,8 +444,6 @@ const save = () => {
     Router.refresh();
 };
 
-/**
- * */
 function recalc() {
     // Zero out account balances
     state.accounts.forEach(a => a.bal = 0);
@@ -445,7 +456,7 @@ function recalc() {
             const acc = state.accounts.find(a => a.id === t.accId);
             if (acc) acc.bal -= t.amount;
         } else if (t.type === 'income') {
-            if (t.isDist) return; // Skip parent ledger records (the child transfer records adjust actual balances)
+            if (t.isDist) return; // Skip parent records
             const acc = state.accounts.find(a => a.id === t.accId);
             if (acc) acc.bal += t.amount;
         } else if (t.type === 'transfer') {
@@ -484,8 +495,7 @@ function distributeIncome(amount, date, source) {
     }
 }
 
-/**
- * */
+// --- STREAMING_CHUNK:Implementing navigation controller... ---
 const Router = {
     currentTab: 0, // 0: Home, 1: Accounts, 2: Subs, 3: History
 
@@ -502,9 +512,9 @@ const Router = {
             const btn = $(`nav-${tab}`);
             if (btn) {
                 if (index === this.currentTab) {
-                    btn.className = "py-1 px-4 flex flex-col items-center gap-1 text-xs text-[#2481cc] transition-all";
+                    btn.className = "py-1 px-6 flex flex-col items-center gap-1 text-xs text-[#2481cc] transition-all";
                 } else {
-                    btn.className = "py-1 px-4 flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-white transition-all";
+                    btn.className = "py-1 px-6 flex flex-col items-center gap-1 text-xs text-slate-400 hover:text-white transition-all";
                 }
             }
         });
@@ -555,7 +565,7 @@ const Router = {
         });
 
         const ctx = canvas.getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 120);
+        const gradient = ctx.createLinearGradient(0, 0, 0, 140);
         gradient.addColorStop(0, 'rgba(36, 129, 204, 0.35)');
         gradient.addColorStop(1, 'rgba(36, 129, 204, 0)');
 
@@ -587,11 +597,11 @@ const Router = {
                 scales: {
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#7f91a4', font: { family: 'Inter', size: 9 } }
+                        ticks: { color: '#7f91a4', font: { family: 'Inter', size: 10 } }
                     },
                     y: {
                         grid: { display: true, color: 'rgba(255, 255, 255, 0.03)' },
-                        ticks: { color: '#7f91a4', font: { family: 'Inter', size: 9 }, maxTicksLimit: 3 }
+                        ticks: { color: '#7f91a4', font: { family: 'Inter', size: 10 }, maxTicksLimit: 4 }
                     }
                 }
             }
@@ -621,7 +631,7 @@ const setupSwipeGestures = () => {
         const deltaY = touchEndY - touchStartY;
         
         // Rule: Swipe must be significantly horizontal rather than vertical
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 75) {
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 80) {
             if (deltaX > 0) {
                 Router.prev(); // Swipe Right -> Go back
             } else {
@@ -631,8 +641,7 @@ const setupSwipeGestures = () => {
     }, { passive: true });
 };
 
-/**
- * */
+// --- STREAMING_CHUNK:Creating core UI rendering modules... ---
 const TgDialog = {
     onConfirm: null,
     onCancel: null,
@@ -672,43 +681,40 @@ const TgDialog = {
     }
 };
 
-/**
- * */
 const Components = {
     TelegramTotalCard: () => {
         const total = state.accounts.reduce((s, a) => s + a.bal, 0);
         return `
-        <div class="tg-card p-5 rounded-2xl relative overflow-hidden shadow-sm">
-            <span class="text-[10px] font-bold tracking-widest text-[#7f91a4] uppercase block mb-1">БАЛАНС СРЕДСТВ</span>
-            <div class="text-3xl font-bold text-white tracking-tight">${cur(total)}</div>
-            <div class="flex items-center gap-1.5 mt-2.5 text-xs text-[#7f91a4]">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                <span>все кошельки синхронизированы</span>
+        <div class="tg-card p-6 rounded-2xl relative overflow-hidden shadow-sm bg-gradient-to-br from-[#17212b] to-[#121b22]">
+            <span class="text-[10px] font-bold tracking-widest text-[#7f91a4] uppercase block mb-1">ОБЩИЙ БАЛАНС СРЕДСТВ</span>
+            <div class="text-3xl md:text-4xl font-bold text-white tracking-tight">${cur(total)}</div>
+            <div class="flex items-center gap-1.5 mt-3 text-xs text-[#7f91a4]">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Бортовой финансовый компьютер активен</span>
             </div>
         </div>`;
     },
 
     MiniRadarChart: () => {
         return `
-        <div class="tg-card p-4 rounded-2xl relative">
-            <div class="flex justify-between items-center mb-3">
+        <div class="tg-card p-5 rounded-2xl relative">
+            <div class="flex justify-between items-center mb-4">
                 <span class="text-[10px] font-bold tracking-wider text-[#7f91a4] uppercase">ДИНАМИКА РАСХОДОВ (14 дней)</span>
             </div>
-            <div class="relative h-28 w-full">
+            <div class="relative h-44 w-full">
                 <canvas id="dashboardChart" class="w-full h-full"></canvas>
             </div>
         </div>`;
     },
 
-    // Wallet card styled exactly like Telegram settings row
     AccountRow: (acc) => {
         const colorHex = COLOR_PALETTE[acc.color] || COLOR_PALETTE.cyan;
         const initial = acc.name.slice(0, 2).toUpperCase() || 'К';
         
         return `
-        <div class="tg-card p-4 rounded-2xl flex items-center justify-between cursor-pointer" onclick="AccModal.open('${acc.id}')">
+        <div class="tg-card p-5 rounded-2xl flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors" onclick="AccModal.open('${acc.id}')">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white select-none shadow-sm" style="background-color: ${colorHex}">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm text-white select-none shadow-sm" style="background-color: ${colorHex}">
                     ${initial}
                 </div>
                 <div>
@@ -717,13 +723,12 @@ const Components = {
                 </div>
             </div>
             <div class="text-right">
-                <div class="font-bold text-sm text-white">${cur(acc.bal)}</div>
-                ${acc.target ? `<div class="text-[10px] text-sky-400 mt-0.5">Цель: ${cur(acc.target)}</div>` : `<div class="text-[10px] text-[#7f91a4] mt-0.5">Лимит не задан</div>`}
+                <div class="font-bold text-base text-white">${cur(acc.bal)}</div>
+                ${acc.target ? `<div class="text-[10px] text-sky-400 mt-1 font-medium">Цель: ${cur(acc.target)}</div>` : `<div class="text-[10px] text-[#7f91a4] mt-1">Лимит не задан</div>`}
             </div>
         </div>`;
     },
 
-    // Transaction rendered like Telegram Message / Chat list
     TxChatBubble: (t) => {
         const isInc = t.type === 'income' || (t.type === 'transfer' && !t.from);
         const sign = isInc ? '+' : '−';
@@ -735,43 +740,52 @@ const Components = {
         
         return `
         <div class="flex flex-col mb-3">
-            <div class="flex justify-between items-center text-[10px] text-[#7f91a4] px-1 mb-1">
+            <div class="flex justify-between items-center text-[10px] text-[#7f91a4] px-1.5 mb-1">
                 <span>${t.date}</span>
-                <span class="font-semibold text-slate-400">${accName}</span>
+                <span class="font-semibold text-slate-400 uppercase tracking-wider">${accName}</span>
             </div>
-            <div class="p-3 ${bubbleStyle} text-white flex justify-between items-center shadow-sm">
+            <div class="p-3.5 ${bubbleStyle} text-white flex justify-between items-center shadow-sm">
                 <div class="flex flex-col">
                     <span class="text-sm font-medium leading-snug">${t.cat || t.note || 'Транзакция'}</span>
                 </div>
                 <div class="flex items-center gap-3 ml-4">
-                    <span class="font-bold text-sm ${colorClass}">${sign} ${cur(t.amount)}</span>
-                    <button onclick="AppActions.deleteTransaction('${t.id}')" class="text-slate-500 hover:text-rose-500 font-bold transition-colors">✕</button>
+                    <span class="font-bold text-sm md:text-base ${colorClass}">${sign} ${cur(t.amount)}</span>
+                    <button onclick="AppActions.deleteTransaction('${t.id}')" class="text-slate-500 hover:text-rose-500 font-bold transition-colors px-1 text-lg">✕</button>
                 </div>
             </div>
         </div>`;
     }
 };
 
-/**
- * */
+// --- STREAMING_CHUNK:Formulating account and subscription dialogue forms... ---
 const Views = {
     home: () => {
         const recent = [...state.tx]
             .filter(t => !t.isDist && !(t.type==='transfer' && !t.from))
             .sort((a,b)=> new Date(b.date)-new Date(a.date))
-            .slice(0, 5)
+            .slice(0, 8)
             .map(Components.TxChatBubble)
             .join('');
 
         return `
-        ${Components.TelegramTotalCard()}
-        ${Components.MiniRadarChart()}
-        <div class="space-y-2.5">
-            <div class="flex justify-between items-center px-1">
-                <span class="text-[10px] font-bold tracking-widest text-[#7f91a4] uppercase">ПОСЛЕДНИЕ СООБЩЕНИЯ (ОПЕРАЦИИ)</span>
-                <button onclick="Router.go(3)" class="text-[10px] font-bold text-[#2481cc] uppercase hover:underline">ВСЕ</button>
+        <div class="max-w-7xl mx-auto space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                <!-- Left Column (Span 2): Analytics & Balance -->
+                <div class="lg:col-span-2 space-y-6">
+                    ${Components.TelegramTotalCard()}
+                    ${Components.MiniRadarChart()}
+                </div>
+                <!-- Right Column (Span 1): Live Activity log -->
+                <div class="space-y-3 lg:col-span-1">
+                    <div class="flex justify-between items-center px-1">
+                        <span class="text-[10px] font-bold tracking-widest text-[#7f91a4] uppercase">ПОСЛЕДНИЕ СООБЩЕНИЯ (ОПЕРАЦИИ)</span>
+                        <button onclick="Router.go(3)" class="text-[10px] font-bold text-[#2481cc] uppercase hover:underline">ВСЕ</button>
+                    </div>
+                    <div class="space-y-1 bg-[#17212b]/30 p-4 rounded-2xl border border-white/5 max-h-[420px] overflow-y-auto pr-2">
+                        ${recent || '<div class="p-8 text-center text-slate-500 text-xs uppercase font-medium">Нет недавних транзакций</div>'}
+                    </div>
+                </div>
             </div>
-            <div class="space-y-1">${recent || '<div class="p-8 text-center text-slate-500 text-xs uppercase font-medium">Нет недавних транзакций</div>'}</div>
         </div>`;
     },
 
@@ -788,39 +802,39 @@ const Views = {
         }
 
         return `
-        <div class="flex justify-between items-center">
-            <div>
-                <h2 class="text-md font-bold text-white uppercase tracking-wider">КОШЕЛЬКИ</h2>
-                <p class="text-xs text-[#7f91a4] mt-0.5">Управление вашими счетами</p>
+        <div class="max-w-7xl mx-auto space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-md font-bold text-white uppercase tracking-wider">КОШЕЛЬКИ</h2>
+                    <p class="text-xs text-[#7f91a4] mt-0.5">Управление вашими счетами</p>
+                </div>
+                <button onclick="AccModal.open(null)" class="tg-btn-primary py-2 px-4 rounded-xl text-xs font-bold text-white uppercase tracking-wider">
+                    Добавить
+                </button>
             </div>
-            <button onclick="AccModal.open(null)" class="tg-btn-primary py-1.5 px-3.5 rounded-xl text-xs font-bold text-white uppercase tracking-wider">
-                Добавить
-            </button>
-        </div>
-        ${allocWarning}
-        <div class="space-y-3">${list}</div>`;
+            ${allocWarning}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${list}</div>
+        </div>`;
     },
 
     subs: () => {
         const list = state.subs.map(s => {
             const acc = state.accounts.find(a => a.id === s.accId);
             return `
-            <div class="tg-card p-4 rounded-2xl flex justify-between items-center relative overflow-hidden">
+            <div class="tg-card p-5 rounded-2xl flex justify-between items-center relative overflow-hidden">
                 <div class="flex-1 pr-4">
                     <div class="font-bold text-sm text-white uppercase tracking-wide">${s.name}</div>
-                    <div class="text-[10px] text-[#7f91a4] mt-1 leading-relaxed">
+                    <div class="text-[10px] text-[#7f91a4] mt-1.5 leading-relaxed">
                         Раз в ${s.freq} • Спишется: <b class="text-[#2481cc]">${s.next}</b> <br>Счёт: ${acc ? acc.name : 'Неизвестно'}
                     </div>
                 </div>
                 <div class="flex flex-col items-end gap-2 shrink-0">
-                    <span class="font-bold text-sm text-white">${cur(s.amount)}</span>
-                    <div class="flex gap-1">
-                        <!-- EDIT BUTTON (EDIT SUBSCRIPTIONS DIRECTLY!) -->
-                        <button onclick="SubModal.open('${s.id}')" class="bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider text-slate-300 transition-all">
+                    <span class="font-bold text-base text-white">${cur(s.amount)}</span>
+                    <div class="flex gap-2 mt-1">
+                        <button onclick="SubModal.open('${s.id}')" class="bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider text-slate-300 transition-all">
                             Редакт.
                         </button>
-                        <!-- AUTO PAY INSTANT ACTION -->
-                        <button onclick="AppActions.confirmSubscription('${s.id}')" class="bg-sky-950/80 hover:bg-sky-900/80 border border-sky-500/20 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider text-sky-400 transition-all">
+                        <button onclick="AppActions.confirmSubscription('${s.id}')" class="bg-sky-950/80 hover:bg-sky-900/80 border border-sky-500/20 px-3.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider text-sky-400 transition-all">
                             Оплатить
                         </button>
                     </div>
@@ -829,16 +843,20 @@ const Views = {
         }).join('');
 
         return `
-        <div class="flex justify-between items-center">
-            <div>
-                <h2 class="text-md font-bold text-white uppercase tracking-wider">АВТОСПИСАНИЯ</h2>
-                <p class="text-xs text-[#7f91a4] mt-0.5">Подписки и регулярные платежи</p>
+        <div class="max-w-7xl mx-auto space-y-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-md font-bold text-white uppercase tracking-wider">АВТОСПИСАНИЯ</h2>
+                    <p class="text-xs text-[#7f91a4] mt-0.5">Подписки и регулярные платежи</p>
+                </div>
+                <button onclick="SubModal.open(null)" class="tg-btn-primary py-2 px-4 rounded-xl text-xs font-bold text-white uppercase tracking-wider">
+                    Добавить
+                </button>
             </div>
-            <button onclick="SubModal.open(null)" class="tg-btn-primary py-1.5 px-3.5 rounded-xl text-xs font-bold text-white uppercase tracking-wider">
-                Добавить
-            </button>
-        </div>
-        <div class="space-y-3">${list || '<div class="tg-card p-8 rounded-2xl text-center text-slate-500 text-xs uppercase">Нет активных автосписаний</div>'}</div>`;
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                ${list || '<div class="tg-card p-8 rounded-2xl text-center text-slate-500 text-xs uppercase col-span-full">Нет активных автосписаний</div>'}
+            </div>
+        </div>`;
     },
 
     history: () => {
@@ -848,16 +866,18 @@ const Views = {
             .map(Components.TxChatBubble).join('');
 
         return `
-        <div>
-            <h2 class="text-md font-bold text-white uppercase tracking-wider">БОРТОВОЙ ЛОГ</h2>
-            <p class="text-xs text-[#7f91a4] mt-0.5">История всех транзакций</p>
-        </div>
-        <div class="space-y-1">${all || '<div class="tg-card p-8 rounded-2xl text-center text-slate-500 text-xs uppercase">История пуста</div>'}</div>`;
+        <div class="max-w-7xl mx-auto space-y-6">
+            <div>
+                <h2 class="text-md font-bold text-white uppercase tracking-wider">БОРТОВОЙ ЛОГ</h2>
+                <p class="text-xs text-[#7f91a4] mt-0.5">История всех транзакций</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                ${all || '<div class="tg-card p-8 rounded-2xl text-center text-slate-500 text-xs uppercase col-span-full">История пуста</div>'}
+            </div>
+        </div>`;
     }
 };
 
-/**
- * */
 const TxModal = {
     type: 'expense',
     
@@ -867,6 +887,11 @@ const TxModal = {
         $('m-date').value = today();
         $('m-sum').value = '';
         $('m-sum').focus();
+        
+        // Reset distribute toggle to default on modal open
+        if ($('m-distribute')) {
+            $('m-distribute').checked = true;
+        }
         
         const opts = state.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
         $('m-acc').innerHTML = opts;
@@ -878,6 +903,17 @@ const TxModal = {
     close() {
         $('tx-modal').classList.add('opacity-0', 'pointer-events-none');
         $('tx-modal-content').classList.add('translate-y-20');
+    },
+
+    toggleDistribute(checked) {
+        if (this.type === 'income') {
+            if (checked) {
+                $('field-acc').classList.add('hidden');
+            } else {
+                $('field-acc').classList.remove('hidden');
+                $('field-acc-label').innerText = 'Счёт зачисления';
+            }
+        }
     },
 
     setType(t) {
@@ -899,15 +935,26 @@ const TxModal = {
         });
         
         if (t === 'income') {
-            $('field-acc').classList.add('hidden');
+            $('field-distribute').classList.remove('hidden');
+            const isDist = $('m-distribute').checked;
+            if (isDist) {
+                $('field-acc').classList.add('hidden');
+            } else {
+                $('field-acc').classList.remove('hidden');
+                $('field-acc-label').innerText = 'Счёт зачисления';
+            }
             $('field-to').classList.add('hidden');
             $('m-cat').placeholder = "Пополнение баланса / Фриланс";
         } else if (t === 'expense') {
+            $('field-distribute').classList.add('hidden');
             $('field-acc').classList.remove('hidden');
+            $('field-acc-label').innerText = 'Счёт списания';
             $('field-to').classList.add('hidden');
             $('m-cat').placeholder = "Продукты, Такси, Кофе...";
         } else {
+            $('field-distribute').classList.add('hidden');
             $('field-acc').classList.remove('hidden');
+            $('field-acc-label').innerText = 'Счёт списания';
             $('field-to').classList.remove('hidden');
             $('m-cat').placeholder = "Перевод на личные нужды";
         }
@@ -920,7 +967,12 @@ const TxModal = {
         const note = $('m-cat').value;
 
         if (this.type === 'income') {
-            distributeIncome(sum, date, note || 'Доход');
+            const distribute = $('m-distribute').checked;
+            if (distribute) {
+                distributeIncome(sum, date, note || 'Доход');
+            } else {
+                state.tx.push({ id:uid(), type:'income', amount:sum, date, accId:$('m-acc').value, cat:note || 'Доход' });
+            }
         } else if (this.type === 'expense') {
             state.tx.push({ id:uid(), type:'expense', amount:sum, date, accId:$('m-acc').value, cat:note });
         } else {
@@ -935,8 +987,6 @@ const TxModal = {
     }
 };
 
-/**
- * */
 const AccModal = {
     selectedColor: 'cyan',
 
@@ -1042,19 +1092,15 @@ const AccModal = {
     }
 };
 
-/**
- * */
 const SubModal = {
     open(id = null) {
         $('sub-modal').classList.remove('opacity-0', 'pointer-events-none');
         $('sub-modal-content').classList.remove('translate-y-20');
 
-        // Render wallets into subscription edit dropdown
         const opts = state.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
         $('sub-m-acc').innerHTML = opts;
 
         if (id) {
-            // Edit existing subscription
             const sub = state.subs.find(s => s.id === id);
             $('sub-m-id').value = id;
             $('sub-m-name').value = sub.name;
@@ -1065,7 +1111,6 @@ const SubModal = {
             $('sub-modal-title').innerText = "Изменить подписку";
             $('sub-m-delete-btn').classList.remove('hidden');
         } else {
-            // Create new subscription
             $('sub-m-id').value = '';
             $('sub-m-name').value = '';
             $('sub-m-amount').value = '';
@@ -1091,7 +1136,6 @@ const SubModal = {
         const accId = $('sub-m-acc').value;
 
         if (id) {
-            // Edit mode
             const sub = state.subs.find(s => s.id === id);
             if (sub) {
                 sub.name = name;
@@ -1101,7 +1145,6 @@ const SubModal = {
                 sub.accId = accId;
             }
         } else {
-            // Add mode
             state.subs.push({
                 id: uid(),
                 name,
@@ -1128,8 +1171,6 @@ const SubModal = {
     }
 };
 
-/**
- * */
 const AppActions = {
     deleteTransaction(id) {
         TgDialog.show("Удалить запись", "Вы хотите удалить эту запись из бортового журнала?", () => {
@@ -1205,19 +1246,18 @@ const AppActions = {
     }
 };
 
-/**
- * */
+// Keydown listeners for desktop shortcuts (+ or N key to open modal)
+document.addEventListener('keydown', (e) => {
+    if (e.key === '+' || e.key === '=' || (e.key.toLowerCase() === 'n' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT' && document.activeElement.tagName !== 'TEXTAREA')) {
+        e.preventDefault();
+        TxModal.open();
+    }
+});
+
 window.onload = function () {
-    // Start confirmation dynamic system init
     TgDialog.init();
-    
-    // Init physics
     setupSwipeGestures();
-    
-    // Execute ledger calculations on initial load
     recalc();
-    
-    // Refresh and go to HUD slide index 0
     Router.go(0);
 };
 </script>
